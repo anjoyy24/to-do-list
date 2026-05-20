@@ -1,0 +1,25 @@
+info:
+  name: patch
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{baseDEV}}/tasks/:id"
+  params:
+    - name: id
+      value: "1779247619677"
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "completed": true
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

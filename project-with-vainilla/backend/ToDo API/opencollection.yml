@@ -1,0 +1,28 @@
+opencollection: 1.0.0
+
+info:
+  name: ToDo API
+config:
+  proxy:
+    inherit: true
+    config:
+      protocol: http
+      hostname: ""
+      port: ""
+      auth:
+        username: ""
+        password: ""
+      bypassProxy: ""
+
+request:
+  variables:
+    - name: baseDEV
+      value: http://localhost:3000/api
+    - name: baseURL
+      value: ""
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git

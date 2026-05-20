@@ -1,0 +1,21 @@
+info:
+  name: post
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseDEV}}/tasks"
+  body:
+    type: json
+    data: |-
+      {
+        "text": "comprar pannnn"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
