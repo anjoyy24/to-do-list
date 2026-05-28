@@ -1,37 +1,83 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TaskInput from "./components/TaskInput";
 import TaskList from "./components/TaskList";
 
 function App() {
 
   const [tasks, setTasks] = useState([]);
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
-  function addTask(text) {
+  async function fetchTasks() {
+
+    const response = await fetch(
+      "http://localhost:3000/api/tasks"
+    );
+
+    const data = await response.json();
+
+    setTasks(data);
+  }
+
+  async function addTask(text) {
 
     if (text.trim() === "") {
       alert("Escribe una tarea");
       return;
     }
 
-    const newTask = {
-      id: Date.now(),
-      text: text,
-      completed: false
-    };
+    const response = await fetch(
+      "http://localhost:3000/api/tasks",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          text: text
+        })
+      }
+    );
 
+    const newTask = await response.json();
     setTasks([...tasks, newTask]);
   }
 
-  function deleteTask(id) {
-    setTasks(tasks.filter(task => task.id !== id));
+  async function deleteTask(id) {
+    await fetch(
+      `http://localhost:3000/api/tasks/${id}`,
+      {
+        method: "DELETE"
+      }
+    );
+
+    setTasks(
+      tasks.filter(task => task.id !== id)
+    );
   }
 
-  function toggleTask(id) {
+  async function toggleTask(id) {
+    const task = tasks.find(t => t.id === id);
+
+    const response = await fetch(
+      `http://localhost:3000/api/tasks/${id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          completed: !task.completed
+        })
+      }
+    );
+
+    const updatedTask = await response.json();
+
     setTasks(
-      tasks.map(task =>
-        task.id === id
-          ? { ...task, completed: !task.completed }
-          : task
+      tasks.map(t =>
+        t.id === id ? updatedTask : t
       )
     );
   }
