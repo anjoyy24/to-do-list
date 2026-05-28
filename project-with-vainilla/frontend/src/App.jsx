@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import TaskInput from "./components/TaskInput";
 import TaskList from "./components/TaskList";
+import FileUpload from "./components/FileUpload";
 
 function App() {
 
@@ -87,6 +88,7 @@ function App() {
       <h1>To-do list</h1>
 
       <TaskInput addTask={addTask} />
+      <FileUpload />
 
       <TaskList
         tasks={tasks}

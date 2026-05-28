@@ -16,3 +16,5 @@ Thumbs.db
 # build (si luego usas frameworks)
 dist/
 build/
+
+uploads/

@@ -1,7 +1,22 @@
 import express from 'express';
 import cors from 'cors';
+import multer from "multer";
+import fs from "fs";
 
 const app = express();
+
+const storage = multer.diskStorage({
+
+    destination: (req, file, cb) => {
+        cb(null, "uploads/");
+    },
+
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname);
+    }
+});
+
+const upload = multer({ storage });
 
 app.use(cors());
 app.use(express.json());
@@ -62,7 +77,38 @@ app.listen(3000, () => {
     console.log("Server is running on port 3000");
 });
 
-
-
 //req.body.text
 // req.params.id
+
+app.post(
+    "/api/upload",
+    upload.single("file"),
+    (req, res) => {
+
+        res.json({
+            message: "Archivo subido",
+            file: req.file
+        });
+    }
+);
+
+app.get("/api/files", (req, res) => {
+
+    fs.readdir("uploads", (err, files) => {
+
+        if (err) {
+            return res.status(500).json({
+                error: "Error leyendo archivos"
+            });
+        }
+
+        res.json(files);
+    });
+});
+
+app.get("/api/download/:name", (req, res) => {
+
+    const filePath = `uploads/${req.params.name}`;
+
+    res.download(filePath);
+});
