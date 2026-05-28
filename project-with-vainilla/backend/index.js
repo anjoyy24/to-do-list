@@ -34,6 +34,8 @@ app.get("/api/tasks/:id", (req, res) => {
     const task = tasks.find(t => t.id == req.params.id);
     if (task) {
         res.json(task);
+    }else{
+        res.status(404).json({ error: "Tarea no encontrada" });
     }
 });
 
@@ -44,13 +46,17 @@ app.post("/api/tasks", (req, res) => {
         completed: false
     };
     tasks.push(task);
-    res.json(task);
+    res.status(201).json(task);
 });
 
 app.delete("/api/tasks/:id", (req, res) => {
-    tasks = tasks.filter(t => t.id != req.params.id);
+    const exists = tasks.some(t => t.id == req.params.id);
+    if(!exists){
+        return res.status(404).json({ error: "Tarea no encontrada" });
+    }
     // es como decir, quédate con todas las tareas que sean diferentes al id de la tarea actual (t.id)
-    res.json({ ok: true });
+    tasks = tasks.filter(t => t.id != req.params.id);
+    res.status(200).json({ ok: true });
 });
 
 app.patch("/api/tasks/:id", (req, res) => {
@@ -73,22 +79,11 @@ app.patch("/api/tasks/:id", (req, res) => {
     res.json(task);
 });
 
-app.listen(3000, () => {
-    console.log("Server is running on port 3000");
-});
-
-//req.body.text
-// req.params.id
-
-app.post(
-    "/api/upload",
-    upload.single("file"),
-    (req, res) => {
-
-        res.json({
-            message: "Archivo subido",
-            file: req.file
-        });
+app.post("/api/upload", upload.single("file"), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: "No se subió ningún archivo" });
+    }
+        res.status(201).json( {message: "Archivo subido", file: req.file});
     }
 );
 
@@ -109,6 +104,12 @@ app.get("/api/files", (req, res) => {
 app.get("/api/download/:name", (req, res) => {
 
     const filePath = `uploads/${req.params.name}`;
-
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: "Archivo no encontrado"});
+    }
     res.download(filePath);
+});
+
+app.listen(3000, () => {
+    console.log("Server is running on port 3000");
 });
