@@ -22,12 +22,17 @@ function FileUpload() {
     }
 
     return (
-        <div>
+        <div className="file-upload">
 
-            <input
-                type="file"
-                onChange={(e) => setFile(e.target.files[0])}
-            />
+            <label>Subir archivo:</label>
+            <label className="custom-file-upload">
+                Seleccionar archivo
+
+                <input
+                    type="file"
+                    onChange={(e) => setFile(e.target.files[0])}
+                />
+            </label>
 
             <button onClick={handleUpload}>
                 Subir
