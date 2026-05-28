@@ -1,26 +1,37 @@
-import React from 'react';
+function TaskItem({ task, deleteTask, toggleTask }) {
 
-const TaskItem = ({ task, onToggleComplete, onDeleteTask }) => {
     return (
         <li>
-            <div className="left-container">
+
+            <div
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px"
+                }}
+            >
+
                 <input
                     type="checkbox"
                     checked={task.completed}
-                    onChange={() => onToggleComplete(task.id)}
+                    onChange={() => toggleTask(task.id)}
                 />
-                <span className={task.completed ? 'completed' : ''}>
+
+                <span className={task.completed ? "completed" : ""}>
                     {task.text}
                 </span>
+
             </div>
+
             <button
                 className="delete-btn"
-                onClick={() => onDeleteTask(task.id)}
+                onClick={() => deleteTask(task.id)}
             >
                 🗑
             </button>
+
         </li>
     );
-};
+}
 
 export default TaskItem;
