@@ -1,24 +1,53 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 const ITEMS_PER_PAGE = 5;
 
-function FileUpload() {
+function FileUpload({ token }) {
     const [files, setFiles] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const fileInputRef = useRef(null);
 
-    useEffect(() => {
-        fetchFiles();
-    }, []);
+    function authHeaders() {
+        return token ? { Authorization: `Bearer ${token}` } : {};
+    }
 
-    async function fetchFiles() {
+    const fetchFiles = useCallback(async () => {
         try {
-            const response = await fetch("http://localhost:3000/api/files");
+            const response = await fetch("http://localhost:3000/api/files", {
+                headers: authHeaders()
+            });
             const data = await response.json();
-            setFiles(data);
+            setFiles(Array.isArray(data) ? data : []);
         } catch {
             console.error("No se pudo obtener la lista de archivos");
         }
+    }, [token]);
+
+    useEffect(() => {
+        fetchFiles();
+    }, [fetchFiles]);
+
+    async function handleDelete(filename) {
+        const response = await fetch(
+            `http://localhost:3000/api/files/${encodeURIComponent(filename)}`,
+            {
+                method: "DELETE",
+                headers: authHeaders()
+            }
+        );
+
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            alert(data.error || "Error al eliminar el archivo");
+            return;
+        }
+
+        await fetchFiles();
+
+        setCurrentPage(prev => {
+            const newTotal = Math.max(1, Math.ceil((files.length - 1) / ITEMS_PER_PAGE));
+            return prev > newTotal ? newTotal : prev;
+        });
     }
 
     async function handleFileSelect(e) {
@@ -30,6 +59,7 @@ function FileUpload() {
 
         await fetch("http://localhost:3000/api/upload", {
             method: "POST",
+            headers: authHeaders(),
             body: formData
         });
 
@@ -65,14 +95,23 @@ function FileUpload() {
                 {paginated.map(file => (
                     <div key={file} className="file-item">
                         <span className="file-name">{getDisplayName(file)}</span>
-                        <a
-                            href={`http://localhost:3000/api/download/${file}`}
-                            download={getDisplayName(file)}
-                            className="download-btn"
-                            title="Descargar"
-                        >
-                            ⬇
-                        </a>
+                        <div className="file-actions">
+                            <a
+                                href={`http://localhost:3000/api/download/${encodeURIComponent(file)}`}
+                                download={getDisplayName(file)}
+                                className="download-btn"
+                                title="Descargar"
+                            >
+                                ⬇
+                            </a>
+                            <button
+                                className="file-delete-btn"
+                                title="Eliminar"
+                                onClick={() => handleDelete(file)}
+                            >
+                                🗑
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>

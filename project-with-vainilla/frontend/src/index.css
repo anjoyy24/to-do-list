@@ -287,8 +287,14 @@ body {
     white-space: nowrap;
 }
 
-.download-btn {
+.file-actions {
+    display: flex;
+    gap: 2px;
     flex-shrink: 0;
+}
+
+.download-btn,
+.file-delete-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -296,14 +302,184 @@ body {
     height: 30px;
     border-radius: 7px;
     font-size: 15px;
-    color: #7aaad0;
     text-decoration: none;
     transition: background 0.15s, color 0.15s;
+    cursor: pointer;
+}
+
+.download-btn {
+    color: #7aaad0;
 }
 
 .download-btn:hover {
     background: #1a3a5c;
     color: #c6dcf2;
+}
+
+.file-delete-btn {
+    background: none;
+    border: none;
+    color: #a0c4de;
+}
+
+.file-delete-btn:hover {
+    background: #ddeef8;
+    color: #3a7ab5;
+    transform: none;
+}
+
+/* ── App header (usuario + logout) ──────────── */
+
+.app-header {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+}
+
+.app-user {
+    font-family: 'Roboto Slab', serif;
+    font-size: 14px;
+    color: #1a3a5c;
+    font-weight: 600;
+}
+
+.logout-btn {
+    padding: 7px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    border: 2px solid #7aaad0;
+    border-radius: 10px;
+    background: transparent;
+    color: #1a3a5c;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.logout-btn:hover {
+    background: #1a3a5c;
+    color: #c6dcf2;
+}
+
+/* ── Auth screen ─────────────────────────────── */
+
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    padding: 24px;
+    background: #d6e8f7;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    background: #c6dcf2;
+    border: 2.5px solid #7aaad0;
+    box-shadow: 5px 5px 0px #7aaad0;
+    border-radius: 20px;
+    padding: 40px 36px 32px;
+}
+
+.auth-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    font-style: italic;
+    color: #1a3a5c;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.auth-subtitle {
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    color: #4a7aaa;
+    text-align: center;
+    margin-bottom: 28px;
+    font-weight: 600;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.auth-input {
+    padding: 11px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    border: 2px solid #7aaad0;
+    border-radius: 10px;
+    background: #f0f7ff;
+    color: #1a2d45;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.auth-input:focus {
+    border-color: #3a7ab5;
+}
+
+.auth-input::placeholder {
+    color: #9abfd8;
+}
+
+.auth-btn {
+    margin-top: 4px;
+    padding: 11px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    border: 2px solid #1a3a5c;
+    border-radius: 10px;
+    background: #1a3a5c;
+    color: #c6dcf2;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.auth-btn:hover:not(:disabled) {
+    background: #2c5580;
+    border-color: #2c5580;
+}
+
+.auth-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.auth-error {
+    font-size: 13px;
+    color: #c0392b;
+    background: #fdecea;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 8px 12px;
+    text-align: center;
+}
+
+.auth-toggle {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #4a7aaa;
+}
+
+.auth-toggle span {
+    font-weight: 700;
+    color: #1a3a5c;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.auth-toggle span:hover {
+    color: #2c5580;
 }
 
 /* ── Server error banner ─────────────────────── */
