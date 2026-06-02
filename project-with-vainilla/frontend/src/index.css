@@ -1,126 +1,316 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background: #f1eee3;
+    font-family: 'Nunito', 'Segoe UI', sans-serif;
+    background: #d6e8f7;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 50px;
-    min-height: 90vh;
+    min-height: 100vh;
+    padding: 24px;
 }
 
-.container {
-    background: #f1daba;
-    padding: 35px;
-    border-radius: 12px;
-    width: 600px;
-    max-width: 600px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+/* ── Layout ─────────────────────────────────── */
+
+.app-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 880px;
 }
 
-h1 {
+.panel {
+    flex: 1;
+    min-width: 280px;
+    border-radius: 18px;
+    padding: 28px 22px 22px;
+    background: #c6dcf2;
+    border: 2.5px solid #7aaad0;
+    box-shadow: 5px 5px 0px #7aaad0;
+}
+
+.panel-title {
     text-align: center;
-    font-size: 40px;
-    margin-bottom: 30px;
-    color: #152232;
+    font-family: 'Pacifico', cursive;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #1a3a5c;
+    margin-bottom: 20px;
 }
+
+/* ── Task input ──────────────────────────────── */
 
 .entrada {
     display: flex;
-    gap: 15px;
+    gap: 8px;
+    margin-bottom: 14px;
 }
 
-input {
+.entrada input[type="text"] {
     flex: 1;
-    padding: 15px;
-    font-size: 18px;
+    padding: 9px 13px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    border: 2px solid #7aaad0;
     border-radius: 10px;
-    border: 1px solid #ccc;
+    background: #f0f7ff;
+    color: #1a2d45;
+    outline: none;
+    transition: border-color 0.2s;
 }
 
-button {
-    padding: 15px 20px;
-    font-size: 16px;
-    border: none;
+.entrada input[type="text"]:focus {
+    border-color: #3a7ab5;
+}
+
+.entrada input[type="text"]::placeholder {
+    color: #9abfd8;
+}
+
+.entrada button {
+    padding: 9px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    border: 2px solid #1a3a5c;
     border-radius: 10px;
-    background: #30656e;
-    color: white;
+    background: #1a3a5c;
+    color: #c6dcf2;
     cursor: pointer;
-    transition: 0.2s;
+    letter-spacing: 0.3px;
+    transition: background 0.2s, border-color 0.2s;
 }
 
-button:hover {
-    background: #3c7a85;
-    transform: scale(1.05);
+.entrada button:hover {
+    background: #2c5580;
+    border-color: #2c5580;
 }
 
-ul {
-    list-style: none;
-    padding: 0;
-    margin-top: 30px;
-}
+/* ── List container ──────────────────────────── */
 
-li {
-    background: #eee;
-    padding: 18px;
-    margin-bottom: 15px;
+.list-container {
+    border: 2px solid #7aaad0;
     border-radius: 12px;
-    font-size: 20px;
+    min-height: 200px;
+    padding: 6px;
+    background: #f0f7ff;
+}
+
+/* ── Task items ──────────────────────────────── */
+
+.task-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.delete-btn {
-    background: crimson;
-    padding: 5px 8px;
+    padding: 9px 10px;
+    border-radius: 8px;
     font-size: 14px;
+    color: #1a2d45;
+    border-bottom: 1.5px solid #c0d8ed;
+    transition: background 0.15s;
 }
 
-.delete-btn:hover {
-    background: darkred;
+.task-item:last-child {
+    border-bottom: none;
+}
+
+.task-item:hover {
+    background: #ddeef8;
+}
+
+.task-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.task-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    flex: none;
+    accent-color: #3a7ab5;
 }
 
 .completed {
     text-decoration: line-through;
-    opacity: 0.6;
+    opacity: 0.4;
 }
 
-input[type="checkbox"] {
-    width: 22px;
-    height: 22px;
-    margin-right: 12px;
-    cursor: pointer;
+/* ── Task edit input ─────────────────────────── */
+
+.task-edit-input {
+    flex: 1;
+    padding: 4px 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    border: 1.5px solid #7aaad0;
+    border-radius: 7px;
+    background: #f0f7ff;
+    color: #1a2d45;
+    outline: none;
+    min-width: 0;
 }
 
-.file-upload {
-    margin-top: 20px;
+/* ── Task action buttons ─────────────────────── */
+
+.task-actions {
     display: flex;
-    gap: 10px;
+    gap: 2px;
     align-items: center;
+    flex-shrink: 0;
 }
 
-input[type="file"] {
+.edit-btn,
+.save-btn,
+.cancel-btn,
+.delete-btn {
+    background: none;
     border: none;
-    padding: 10px 0;
-    background: transparent;
-}
-
-.custom-file-upload {
-    background: #30656e;
-    color: white;
-    padding: 12px 18px;
-    border-radius: 10px;
     cursor: pointer;
-    transition: 0.2s;
-    display: inline-block;
-    font-size: 16px;
+    font-size: 14px;
+    padding: 4px 7px;
+    border-radius: 7px;
+    line-height: 1;
+    transition: background 0.15s, color 0.15s;
 }
 
-.custom-file-upload:hover {
-    background: #3c7a85;
-    transform: scale(1.05);
+.edit-btn { color: #7aaad0; }
+.edit-btn:hover { color: #3a7ab5; background: #ddeef8; transform: none; }
+
+.save-btn { color: #6aaa78; font-weight: 700; }
+.save-btn:hover { color: #3d7a4a; background: #e8f5eb; transform: none; }
+
+.cancel-btn { color: #7aaad0; font-weight: 700; }
+.cancel-btn:hover { color: #3a7ab5; background: #ddeef8; transform: none; }
+
+.delete-btn { color: #a0c4de; }
+.delete-btn:hover { color: #3a7ab5; background: #ddeef8; transform: none; }
+
+/* ── Pagination ──────────────────────────────── */
+
+.pagination {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin-top: 14px;
 }
 
-.custom-file-upload input[type="file"] {
-    display: none;
+.page-btn {
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    color: #7aaad0;
+    padding: 5px 9px;
+    border-radius: 7px;
+    user-select: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+.page-btn:hover {
+    background: #ddeef8;
+    color: #3a7ab5;
+}
+
+.page-btn.active {
+    font-weight: 700;
+    background: #1a3a5c;
+    color: #c6dcf2;
+}
+
+/* ── Files panel ─────────────────────────────── */
+
+.upload-btn-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+
+.upload-btn-container button {
+    padding: 9px 22px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    border: 2px solid #1a3a5c;
+    border-radius: 10px;
+    background: #1a3a5c;
+    color: #c6dcf2;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: background 0.2s;
+}
+
+.upload-btn-container button:hover {
+    background: #2c5580;
+    border-color: #2c5580;
+    transform: none;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    color: #1a2d45;
+    background: #f0f7ff;
+    border: 1.5px solid #b0cfea;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.file-item:last-child { margin-bottom: 0; }
+
+.file-item:hover { background: #ddeef8; }
+
+.file-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.download-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 7px;
+    font-size: 15px;
+    color: #7aaad0;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+.download-btn:hover {
+    background: #1a3a5c;
+    color: #c6dcf2;
+}
+
+/* ── Server error banner ─────────────────────── */
+
+.server-error {
+    width: 100%;
+    padding: 12px 16px;
+    background: #fff9c4;
+    border: 1.5px solid #f0c040;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #7c5800;
 }
