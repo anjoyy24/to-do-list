@@ -1,4 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto+Slab:wght@100..900&display=swap');
+
+
 
 * {
     box-sizing: border-box;
@@ -21,18 +23,18 @@ body {
 .app-wrapper {
     display: flex;
     flex-wrap: wrap;
-    gap: 28px;
+    gap: 32px;
     justify-content: center;
     align-items: flex-start;
     width: 100%;
-    max-width: 880px;
+    max-width: 1200px;
 }
 
 .panel {
     flex: 1;
-    min-width: 280px;
+    min-width: 380px;
     border-radius: 18px;
-    padding: 28px 22px 22px;
+    padding: 36px 32px 28px;
     background: #c6dcf2;
     border: 2.5px solid #7aaad0;
     box-shadow: 5px 5px 0px #7aaad0;
@@ -40,12 +42,13 @@ body {
 
 .panel-title {
     text-align: center;
-    font-family: 'Pacifico', cursive;
-    font-size: 22px;
-    font-weight: 400;
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    font-style: italic;
     letter-spacing: 1px;
     color: #1a3a5c;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 /* ── Task input ──────────────────────────────── */
@@ -101,8 +104,8 @@ body {
 .list-container {
     border: 2px solid #7aaad0;
     border-radius: 12px;
-    min-height: 200px;
-    padding: 6px;
+    min-height: 320px;
+    padding: 8px;
     background: #f0f7ff;
 }
 
