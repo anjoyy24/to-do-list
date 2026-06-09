@@ -1,11 +1,32 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import multer from "multer";
 import fs from "fs";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const app = express();
-const JWT_SECRET = 'todo-list-secret-key-2024';
+const JWT_SECRET = process.env.JWT_SECRET || 'todo-list-secret-key-2024';
+
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('Conectado a MongoDB Atlas'))
+    .catch(err => { console.error('Error conectando a MongoDB:', err); process.exit(1); });
+
+const userSchema = new mongoose.Schema({
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true }
+});
+
+const taskSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    text: { type: String, required: true },
+    completed: { type: Boolean, default: false }
+});
+
+const User = mongoose.model('User', userSchema);
+const Task = mongoose.model('Task', taskSchema);
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => { cb(null, "uploads/"); },
@@ -16,11 +37,6 @@ const upload = multer({ storage });
 
 app.use(cors());
 app.use(express.json());
-
-let users = [];
-let tasks = [];
-
-// ── Auth middleware ───────────────────────────
 
 function verifyToken(req, res, next) {
     const auth = req.headers.authorization;
@@ -35,66 +51,73 @@ function verifyToken(req, res, next) {
     }
 }
 
-// ── Auth routes ───────────────────────────────
 
-app.post("/api/auth/register", (req, res) => {
+app.post("/api/auth/register", async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
         return res.status(400).json({ error: 'Usuario y contraseña requeridos' });
     }
-    if (users.find(u => u.username === username)) {
-        return res.status(409).json({ error: 'El usuario ya existe' });
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await User.create({ username, password: hashedPassword });
+        const token = jwt.sign({ id: user._id, username }, JWT_SECRET, { expiresIn: '7d' });
+        res.status(201).json({ token, username });
+    } catch (err) {
+        if (err.code === 11000) return res.status(409).json({ error: 'El usuario ya existe' });
+        res.status(500).json({ error: 'Error al crear usuario' });
     }
-    const user = { id: Date.now(), username, password };
-    users.push(user);
-    const token = jwt.sign({ id: user.id, username }, JWT_SECRET, { expiresIn: '7d' });
-    res.status(201).json({ token, username });
 });
 
-app.post("/api/auth/login", (req, res) => {
+app.post("/api/auth/login", async (req, res) => {
     const { username, password } = req.body;
-    const user = users.find(u => u.username === username && u.password === password);
-    if (!user) {
-        return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+    try {
+        const user = await User.findOne({ username });
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+        }
+        const token = jwt.sign({ id: user._id, username }, JWT_SECRET, { expiresIn: '7d' });
+        res.json({ token, username });
+    } catch {
+        res.status(500).json({ error: 'Error al iniciar sesión' });
     }
-    const token = jwt.sign({ id: user.id, username }, JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, username });
 });
 
-// ── Task routes (protected, per-user) ─────────
 
-app.get("/api/tasks", verifyToken, (req, res) => {
-    res.json(tasks.filter(t => t.userId === req.user.id));
+app.get("/api/tasks", verifyToken, async (req, res) => {
+    const tasks = await Task.find({ userId: req.user.id });
+    res.json(tasks);
 });
 
-app.get("/api/tasks/:id", verifyToken, (req, res) => {
-    const task = tasks.find(t => t.id == req.params.id && t.userId === req.user.id);
+app.get("/api/tasks/:id", verifyToken, async (req, res) => {
+    const task = await Task.findOne({ _id: req.params.id, userId: req.user.id });
     if (task) res.json(task);
     else res.status(404).json({ error: "Tarea no encontrada" });
 });
 
-app.post("/api/tasks", verifyToken, (req, res) => {
-    const task = { id: Date.now(), userId: req.user.id, text: req.body.text, completed: false };
-    tasks.push(task);
+app.post("/api/tasks", verifyToken, async (req, res) => {
+    const task = await Task.create({ userId: req.user.id, text: req.body.text });
     res.status(201).json(task);
 });
 
-app.delete("/api/tasks/:id", verifyToken, (req, res) => {
-    const exists = tasks.some(t => t.id == req.params.id && t.userId === req.user.id);
-    if (!exists) return res.status(404).json({ error: "Tarea no encontrada" });
-    tasks = tasks.filter(t => !(t.id == req.params.id && t.userId === req.user.id));
+app.delete("/api/tasks/:id", verifyToken, async (req, res) => {
+    const result = await Task.deleteOne({ _id: req.params.id, userId: req.user.id });
+    if (result.deletedCount === 0) return res.status(404).json({ error: "Tarea no encontrada" });
     res.status(200).json({ ok: true });
 });
 
-app.patch("/api/tasks/:id", verifyToken, (req, res) => {
-    const task = tasks.find(t => t.id == req.params.id && t.userId === req.user.id);
+app.patch("/api/tasks/:id", verifyToken, async (req, res) => {
+    const updates = {};
+    if (req.body.completed !== undefined) updates.completed = req.body.completed;
+    if (req.body.text !== undefined) updates.text = req.body.text;
+    const task = await Task.findOneAndUpdate(
+        { _id: req.params.id, userId: req.user.id },
+        updates,
+        { new: true }
+    );
     if (!task) return res.status(404).json({ error: "Tarea no encontrada" });
-    if (req.body.completed !== undefined) task.completed = req.body.completed;
-    if (req.body.text !== undefined) task.text = req.body.text;
     res.json(task);
 });
 
-// ── File routes (protected) ───────────────────
 
 app.post("/api/upload", verifyToken, upload.single("file"), (req, res) => {
     if (!req.file) return res.status(400).json({ error: "No se subió ningún archivo" });
