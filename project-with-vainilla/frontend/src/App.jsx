@@ -35,7 +35,7 @@ function App() {
 
   async function fetchTasks() {
     try {
-      const response = await fetch("http://localhost:3000/api/tasks", {
+      const response = await fetch("/api/tasks", {
         headers: authHeaders()
       });
       if (response.status === 401) { handleLogout(); return; }
@@ -49,7 +49,7 @@ function App() {
 
   async function addTask(text) {
     if (text.trim() === "") { alert("Escribe una tarea"); return; }
-    const response = await fetch("http://localhost:3000/api/tasks", {
+    const response = await fetch("/api/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify({ text })
@@ -59,32 +59,32 @@ function App() {
   }
 
   async function deleteTask(id) {
-    await fetch(`http://localhost:3000/api/tasks/${id}`, {
+    await fetch(`/api/tasks/${id}`, {
       method: "DELETE",
       headers: authHeaders()
     });
-    setTasks(tasks.filter(task => task.id !== id));
+    setTasks(tasks.filter(task => task._id !== id));
   }
 
   async function editTask(id, newText) {
-    const response = await fetch(`http://localhost:3000/api/tasks/${id}`, {
+    const response = await fetch(`/api/tasks/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify({ text: newText })
     });
     const updatedTask = await response.json();
-    setTasks(tasks.map(t => (t.id === id ? updatedTask : t)));
+    setTasks(tasks.map(t => (t._id === id ? updatedTask : t)));
   }
 
   async function toggleTask(id) {
-    const task = tasks.find(t => t.id === id);
-    const response = await fetch(`http://localhost:3000/api/tasks/${id}`, {
+    const task = tasks.find(t => t._id === id);
+    const response = await fetch(`/api/tasks/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify({ completed: !task.completed })
     });
     const updatedTask = await response.json();
-    setTasks(tasks.map(t => (t.id === id ? updatedTask : t)));
+    setTasks(tasks.map(t => (t._id === id ? updatedTask : t)));
   }
 
   if (!token) {
@@ -95,7 +95,7 @@ function App() {
     <div className="app-wrapper">
       {serverError && (
         <div className="server-error">
-          ⚠ No se puede conectar al servidor. Asegúrate de que el backend esté corriendo en el puerto 3000.
+          ⚠ No se puede conectar al servidor. Asegúrate de que el backend esté corriendo en el puerto 3001.
         </div>
       )}
 

@@ -17,7 +17,7 @@ function TaskList({ tasks, deleteTask, toggleTask, editTask }) {
             <div className="list-container">
                 {paginated.map(task => (
                     <TaskItem
-                        key={task.id}
+                        key={task._id}
                         task={task}
                         deleteTask={deleteTask}
                         toggleTask={toggleTask}

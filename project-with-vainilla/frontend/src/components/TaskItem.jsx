@@ -7,7 +7,7 @@ function TaskItem({ task, deleteTask, toggleTask, editTask }) {
     function handleSave() {
         const trimmed = draft.trim();
         if (trimmed && trimmed !== task.text) {
-            editTask(task.id, trimmed);
+            editTask(task._id, trimmed);
         } else {
             setDraft(task.text);
         }
@@ -28,7 +28,7 @@ function TaskItem({ task, deleteTask, toggleTask, editTask }) {
                 <input
                     type="checkbox"
                     checked={task.completed}
-                    onChange={() => toggleTask(task.id)}
+                    onChange={() => toggleTask(task._id)}
                 />
                 {editing ? (
                     <input
@@ -54,7 +54,7 @@ function TaskItem({ task, deleteTask, toggleTask, editTask }) {
                 ) : (
                     <button className="edit-btn" onClick={() => setEditing(true)}>✏</button>
                 )}
-                <button className="delete-btn" onClick={() => deleteTask(task.id)}>🗑</button>
+                <button className="delete-btn" onClick={() => deleteTask(task._id)}>🗑</button>
             </div>
         </div>
     );

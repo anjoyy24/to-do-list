@@ -13,7 +13,7 @@ function FileUpload({ token }) {
 
     const fetchFiles = useCallback(async () => {
         try {
-            const response = await fetch("http://localhost:3000/api/files", {
+            const response = await fetch("/api/files", {
                 headers: authHeaders()
             });
             const data = await response.json();
@@ -29,7 +29,7 @@ function FileUpload({ token }) {
 
     async function handleDelete(filename) {
         const response = await fetch(
-            `http://localhost:3000/api/files/${encodeURIComponent(filename)}`,
+            `/api/files/${encodeURIComponent(filename)}`,
             {
                 method: "DELETE",
                 headers: authHeaders()
@@ -57,7 +57,7 @@ function FileUpload({ token }) {
         const formData = new FormData();
         formData.append("file", file);
 
-        await fetch("http://localhost:3000/api/upload", {
+        await fetch("/api/upload", {
             method: "POST",
             headers: authHeaders(),
             body: formData
@@ -97,7 +97,7 @@ function FileUpload({ token }) {
                         <span className="file-name">{getDisplayName(file)}</span>
                         <div className="file-actions">
                             <a
-                                href={`http://localhost:3000/api/download/${encodeURIComponent(file)}`}
+                                href={`/api/download/${encodeURIComponent(file)}`}
                                 download={getDisplayName(file)}
                                 className="download-btn"
                                 title="Descargar"

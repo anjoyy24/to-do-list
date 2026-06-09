@@ -9,6 +9,7 @@ import bcrypt from "bcryptjs";
 
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || 'todo-list-secret-key-2024';
+const PORT = process.env.PORT || 3000;
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Conectado a MongoDB Atlas'))
@@ -63,6 +64,7 @@ app.post("/api/auth/register", async (req, res) => {
         const token = jwt.sign({ id: user._id, username }, JWT_SECRET, { expiresIn: '7d' });
         res.status(201).json({ token, username });
     } catch (err) {
+        console.error('Error al crear usuario:', err.message);
         if (err.code === 11000) return res.status(409).json({ error: 'El usuario ya existe' });
         res.status(500).json({ error: 'Error al crear usuario' });
     }
@@ -148,4 +150,4 @@ app.get("/api/download/:name", (req, res) => {
     res.download(filePath);
 });
 
-app.listen(3000, () => console.log("Server is running on port 3000"));
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
