@@ -10,6 +10,9 @@ import bcrypt from "bcryptjs";
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || 'todo-list-secret-key-2024';
 const PORT = process.env.PORT || 3000;
+const UPLOADS_DIR = process.env.VERCEL ? '/tmp/uploads' : 'uploads';
+
+fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Conectado a MongoDB Atlas'))
@@ -30,7 +33,7 @@ const User = mongoose.model('User', userSchema);
 const Task = mongoose.model('Task', taskSchema);
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => { cb(null, "uploads/"); },
+    destination: (req, file, cb) => { cb(null, UPLOADS_DIR); },
     filename: (req, file, cb) => { cb(null, Date.now() + "-" + file.originalname); }
 });
 
@@ -127,14 +130,14 @@ app.post("/api/upload", verifyToken, upload.single("file"), (req, res) => {
 });
 
 app.get("/api/files", verifyToken, (req, res) => {
-    fs.readdir("uploads", (err, files) => {
-        if (err) return res.status(500).json({ error: "Error leyendo archivos" });
+    fs.readdir(UPLOADS_DIR, (err, files) => {
+        if (err) return res.json([]);
         res.json(files);
     });
 });
 
 app.delete("/api/files/:name", verifyToken, (req, res) => {
-    const filePath = `uploads/${req.params.name}`;
+    const filePath = `${UPLOADS_DIR}/${req.params.name}`;
     if (!fs.existsSync(filePath)) {
         return res.status(404).json({ error: "Archivo no encontrado" });
     }
@@ -145,9 +148,11 @@ app.delete("/api/files/:name", verifyToken, (req, res) => {
 });
 
 app.get("/api/download/:name", (req, res) => {
-    const filePath = `uploads/${req.params.name}`;
+    const filePath = `${UPLOADS_DIR}/${req.params.name}`;
     if (!fs.existsSync(filePath)) return res.status(404).json({ error: "Archivo no encontrado" });
     res.download(filePath);
 });
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
+export default app;
