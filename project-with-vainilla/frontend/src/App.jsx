@@ -95,7 +95,7 @@ function App() {
     <div className="app-wrapper">
       {serverError && (
         <div className="server-error">
-          ⚠ No se puede conectar al servidor. Asegúrate de que el backend esté corriendo en el puerto 3001.
+          ⚠ No se puede conectar al servidor. Asegúrate de que el backend esté corriendo en el puerto 3000.
         </div>
       )}
 

@@ -27,14 +27,11 @@ function FileUpload({ token }) {
         fetchFiles();
     }, [fetchFiles]);
 
-    async function handleDelete(filename) {
-        const response = await fetch(
-            `/api/files/${encodeURIComponent(filename)}`,
-            {
-                method: "DELETE",
-                headers: authHeaders()
-            }
-        );
+    async function handleDelete(id) {
+        const response = await fetch(`/api/files/${id}`, {
+            method: "DELETE",
+            headers: authHeaders()
+        });
 
         if (!response.ok) {
             const data = await response.json().catch(() => ({}));
@@ -67,10 +64,6 @@ function FileUpload({ token }) {
         await fetchFiles();
     }
 
-    function getDisplayName(filename) {
-        return filename.replace(/^\d+-/, "");
-    }
-
     const totalPages = Math.max(1, Math.ceil(files.length / ITEMS_PER_PAGE));
     const paginated = files.slice(
         (currentPage - 1) * ITEMS_PER_PAGE,
@@ -93,12 +86,12 @@ function FileUpload({ token }) {
 
             <div className="list-container">
                 {paginated.map(file => (
-                    <div key={file} className="file-item">
-                        <span className="file-name">{getDisplayName(file)}</span>
+                    <div key={file._id} className="file-item">
+                        <span className="file-name">{file.originalname}</span>
                         <div className="file-actions">
                             <a
-                                href={`/api/download/${encodeURIComponent(file)}`}
-                                download={getDisplayName(file)}
+                                href={`/api/download/${file._id}`}
+                                download={file.originalname}
                                 className="download-btn"
                                 title="Descargar"
                             >
@@ -107,7 +100,7 @@ function FileUpload({ token }) {
                             <button
                                 className="file-delete-btn"
                                 title="Eliminar"
-                                onClick={() => handleDelete(file)}
+                                onClick={() => handleDelete(file._id)}
                             >
                                 🗑
                             </button>
